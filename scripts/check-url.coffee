@@ -10,7 +10,7 @@
 #
 # Commands:
 #   hubot check `http://www.google.com` - Add single url into check-list and will check every 2 minutes
-#   hubot check all - Check now all urls in list
+#   hubot check-all - Check now all urls in list
 #   hubot what are you checking - Show list of urls being checked
 #   hubot empty url list
 #
