@@ -22,10 +22,15 @@ URL  = require "url"
 REDIS = require "redis"
 QUEUE = "check-url"
 
-frequency = 10000
+if process.env.REDISTOGO_URL?
+  publisher = REDIS.createClient(6379, 'localhost').auth('');
+else
+  URL.parse(process.env.REDISTOGO_URL);
+  publisher = REDIS.createClient(rtg.port, rtg.hostname);
+  publisher.auth(rtg.auth.split(":")[1]);
 
-publisher = REDIS.createClient(6379, 'localhost');
-publisher.auth('');
+# 2 minutes
+frequency = 1000 * 60 * 2 
 
 check = (url, pub, msg) ->
   parsedUrl = URL.parse(url)
@@ -47,7 +52,7 @@ check = (url, pub, msg) ->
           body: body
           status: res.statusCode
       if pub?
-        pub.publish(QUEUE, url + "**" + res.statusCode)
+        pub.publish(QUEUE, url + ": " + res.statusCode)
       if msg?
         msg.send url + "\t\t : " + res.statusCode
 
@@ -76,15 +81,15 @@ module.exports = (robot) ->
   keepAlive()
 
 
-  report = () ->
-    db = REDIS.createClient(6379,'localhost')
-    db.auth('')
-    db.subscribe(QUEUE)
+  # report = () ->
+  #   db = REDIS.createClient(6379,'localhost')
+  #   db.auth('')
+  #   db.subscribe(QUEUE)
     
-    db.on 'message', (channel, message) ->
+  #   db.on 'message', (channel, message) ->
       #robot.logger.info(message)
   
-  report()
+  #report()
 
   robot.respond /check (.*)$/i, (msg) ->
     url = msg.match[1]
