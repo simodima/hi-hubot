@@ -21,6 +21,8 @@
     "hubot-scripts": ">=2.0.8",
     "optparse": "1.0.3"
   },
-  "engine": "node >= 0.5.0"
+  "engines": {
+    "node" : ">= 0.5.0"
+  }
 }
 
