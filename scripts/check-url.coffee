@@ -23,11 +23,12 @@ REDIS = require "redis"
 QUEUE = "check-url"
 
 if process.env.REDISTOGO_URL?
-  publisher = REDIS.createClient(6379, 'localhost').auth('');
-else
   URL.parse(process.env.REDISTOGO_URL);
   publisher = REDIS.createClient(rtg.port, rtg.hostname);
   publisher.auth(rtg.auth.split(":")[1]);
+else
+  publisher = REDIS.createClient(6379, 'localhost').auth('');
+
 
 # 2 minutes
 frequency = 1000 * 60 * 2 
