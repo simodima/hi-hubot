@@ -67,9 +67,9 @@ check = (url, pub, msg) ->
 module.exports = (robot) ->
 
   keepAlive = () ->
-    robot.brain.data.keepalives ?= []
+    robot.brain.data.urls ?= []
 
-    for url in robot.brain.data.keepalives
+    for url in robot.brain.data.urls
       try
         check(url, publisher)
       catch e
@@ -94,43 +94,48 @@ module.exports = (robot) ->
 
   robot.respond /check (.*)$/i, (msg) ->
     url = msg.match[1]
+    robot.brain.data.urls ?= []
 
-    robot.brain.data.keepalives ?= []
-
-    if url in robot.brain.data.keepalives
+    if url in robot.brain.data.urls
       msg.send "I already am."
     else
-      robot.brain.data.keepalives.push url
+      robot.brain.data.urls.push url
       msg.send "OK. I'll check that url every " + frequency/1000 + " seconds."
 
-  robot.respond /empty url list$/i, (msg) ->
-    
-    robot.brain.data.keepalives = []
 
+
+
+  robot.respond /empty url list$/i, (msg) ->
+    robot.brain.data.urls = []
     msg.send "Now url list is empty."
 
+
+
+
   robot.respond /check-all$/i, (msg) ->
-    
-    robot.brain.data.keepalives ?= []
+    robot.brain.data.urls ?= []
+    msg.send "Start checking"
 
-    for url in robot.brain.data.keepalives
-      console.log(url)
+    for url in robot.brain.data.urls
       check(url, null, msg)
-   
-    msg.send "Done."
 
+
+   
+    
   robot.respond /don'?t check (.*)$/i, (msg) ->
     url = msg.match[1]
+    robot.brain.data.urls ?= []
 
-    robot.brain.data.keepalives ?= []
-
-    robot.brain.data.keepalives.splice(robot.brain.data.keepalives.indexOf(url), 1);
+    robot.brain.data.urls.splice(robot.brain.data.urls.indexOf(url), 1);
     msg.send "OK. I've removed that url from my list of urls to keep alive."
 
-  robot.respond /what are you checking/i, (msg) ->
-    robot.brain.data.keepalives ?= []
 
-    if robot.brain.data.keepalives.length > 0
-      msg.send "These are the urls I'm keeping alive\n\n" + robot.brain.data.keepalives.join('\n')
+
+
+  robot.respond /what are you checking/i, (msg) ->
+    robot.brain.data.urls ?= []
+
+    if robot.brain.data.urls.length > 0
+      msg.send "These are the urls I'm keeping alive\n\n" + robot.brain.data.urls.join('\n')
     else
       msg.send "i'm not currently keeping any urls alive. Why don't you add one."
