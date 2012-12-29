@@ -23,7 +23,7 @@ REDIS = require "redis"
 QUEUE = "check-url"
 
 if process.env.REDISTOGO_URL?
-  URL.parse(process.env.REDISTOGO_URL);
+  rtg = URL.parse(process.env.REDISTOGO_URL);
   publisher = REDIS.createClient(rtg.port, rtg.hostname);
   publisher.auth(rtg.auth.split(":")[1]);
 else
