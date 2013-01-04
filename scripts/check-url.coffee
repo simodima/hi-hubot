@@ -54,7 +54,7 @@ check = (url, pub, msg) ->
           body: body
           status: res.statusCode
       if pub?
-        message = JSON.stringify({'id': MD5.md5(url), 'url' : url, 'code' : res.statusCode})
+        message = JSON.stringify({'id': MD5(url), 'url' : url, 'code' : res.statusCode})
         pub.publish(QUEUE, message)
       if msg?
         msg.send url + "\t\t : " + res.statusCode
