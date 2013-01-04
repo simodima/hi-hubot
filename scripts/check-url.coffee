@@ -53,7 +53,8 @@ check = (url, pub, msg) ->
           body: body
           status: res.statusCode
       if pub?
-        pub.publish(QUEUE, url + ": " + res.statusCode)
+        message = JSON.stringify({'url' : url, 'code' : res.statusCode})
+        pub.publish(QUEUE, message)
       if msg?
         msg.send url + "\t\t : " + res.statusCode
 
@@ -81,16 +82,6 @@ module.exports = (robot) ->
 
   keepAlive()
 
-
-  # report = () ->
-  #   db = REDIS.createClient(6379,'localhost')
-  #   db.auth('')
-  #   db.subscribe(QUEUE)
-    
-  #   db.on 'message', (channel, message) ->
-      #robot.logger.info(message)
-  
-  #report()
 
   robot.respond /check (.*)$/i, (msg) ->
     url = msg.match[1]
