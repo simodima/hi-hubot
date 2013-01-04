@@ -127,7 +127,7 @@ module.exports = (robot) ->
     robot.brain.data.urls ?= []
 
     robot.brain.data.urls.splice(robot.brain.data.urls.indexOf(url), 1);
-    msg.send "OK. I've removed that url from my list of urls to keep alive."
+    msg.send "OK. I've removed that url from my list of urls to check."
 
 
 
@@ -136,6 +136,6 @@ module.exports = (robot) ->
     robot.brain.data.urls ?= []
 
     if robot.brain.data.urls.length > 0
-      msg.send "These are the urls I'm keeping alive\n\n" + robot.brain.data.urls.join('\n')
+      msg.send "These are the urls I'm checking\n\n" + robot.brain.data.urls.join('\n')
     else
-      msg.send "i'm not currently keeping any urls alive. Why don't you add one."
+      msg.send "i'm not currently checking any urls alive. Why don't you add one."
