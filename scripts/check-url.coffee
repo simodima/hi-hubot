@@ -109,7 +109,7 @@ module.exports = (robot) ->
     msg.send "Start checking"
 
     for url in robot.brain.data.urls
-      check(url, null, msg)
+      check(url, publisher, msg)
 
 
    
