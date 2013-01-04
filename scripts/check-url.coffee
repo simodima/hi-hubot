@@ -20,6 +20,7 @@
 HTTP = require "http"
 URL  = require "url"
 REDIS = require "redis"
+MD5 = require("blueimp-md5").md5
 QUEUE = "check-url"
 
 if process.env.REDISTOGO_URL?
@@ -53,7 +54,7 @@ check = (url, pub, msg) ->
           body: body
           status: res.statusCode
       if pub?
-        message = JSON.stringify({'url' : url, 'code' : res.statusCode})
+        message = JSON.stringify({'id': MD5.md5(url), 'url' : url, 'code' : res.statusCode})
         pub.publish(QUEUE, message)
       if msg?
         msg.send url + "\t\t : " + res.statusCode
