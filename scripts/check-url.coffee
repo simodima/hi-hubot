@@ -32,7 +32,7 @@ else
 
 
 # 2 minutes
-frequency = 1000 * 60 * 2 
+frequency = 1000 * 60 * 2
 
 check = (url, pub, msg) ->
   parsedUrl = URL.parse(url)
@@ -43,18 +43,20 @@ check = (url, pub, msg) ->
     method: 'GET'
 
   req = HTTP.request options, (res) ->
-
+    start_time = new Date().getTime()
     body = ""
     res.setEncoding("utf8")
     res.on "data", (chunk) ->
       body += chunk
     res.on "end", () ->
+      end_time = new Date().getTime()
+      response_time = end_time - start_time
       data =
         response:
           body: body
           status: res.statusCode
       if pub?
-        message = JSON.stringify({'id': MD5(url), 'url' : url, 'code' : res.statusCode})
+        message = JSON.stringify({'id': MD5(url), 'url' : url, 'code' : res.statusCode, "response_time" : response_time})
         pub.publish(QUEUE, message)
       if msg?
         msg.send url + "\t\t : " + res.statusCode
@@ -68,7 +70,7 @@ check = (url, pub, msg) ->
 
 module.exports = (robot) ->
 
-  keepAlive = () ->
+  keepAlive = (msg) ->
     robot.brain.data.urls ?= []
 
     for url in robot.brain.data.urls
@@ -93,6 +95,7 @@ module.exports = (robot) ->
     else
       robot.brain.data.urls.push url
       msg.send "OK. I'll check that url every " + frequency/1000 + " seconds."
+    keepAlive(msg)
 
 
 
