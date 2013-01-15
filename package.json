@@ -12,8 +12,8 @@
   "dependencies": {
     "redis": ">=0.8.0",
     "blueimp-md5" : "*",
-    "hubot": ">=2.2.0",
-    "hubot-gtalk": ">= 0.0.1",
+    "hubot": "2.3.0",
+    "hubot-gtalk": "= 0.0.1",
     "hubot-scripts": ">=2.0.8",
     "optparse": "1.0.3"
   },
