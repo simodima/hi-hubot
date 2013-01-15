@@ -75,7 +75,7 @@ module.exports = (robot) ->
 
     for url in robot.brain.data.urls
       try
-        check(url, publisher)
+        check(url, publisher, msg)
       catch e
         console.log("that probably isn't a url: " + url + " -- " + e)
 
@@ -83,7 +83,7 @@ module.exports = (robot) ->
       keepAlive()
     ), frequency
 
-  keepAlive()
+  keepAlive(msg)
 
 
   robot.respond /check (.*)$/i, (msg) ->
