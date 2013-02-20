@@ -83,7 +83,7 @@ module.exports = (robot) ->
       keepAlive()
     ), frequency
 
-  keepAlive(msg)
+  keepAlive()
 
 
   robot.respond /check (.*)$/i, (msg) ->
