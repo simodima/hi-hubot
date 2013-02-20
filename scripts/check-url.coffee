@@ -34,7 +34,7 @@ else
 # 2 minutes
 frequency = 1000 * 60 * 2
 
-check = (url, pub, msg) ->
+check = (url, pub, msg) ->  
   parsedUrl = URL.parse(url)
   options   =
     host: parsedUrl.host
@@ -75,7 +75,7 @@ module.exports = (robot) ->
 
     for url in robot.brain.data.urls
       try
-        check(url, publisher)
+        check(url, publisher, msg)
       catch e
         console.log("that probably isn't a url: " + url + " -- " + e)
 
@@ -83,7 +83,7 @@ module.exports = (robot) ->
       keepAlive()
     ), frequency
 
-  keepAlive()
+  keepAlive(msg)
 
 
   robot.respond /check (.*)$/i, (msg) ->
@@ -95,7 +95,6 @@ module.exports = (robot) ->
     else
       robot.brain.data.urls.push url
       msg.send "OK. I'll check that url every " + frequency/1000 + " seconds."
-    keepAlive(msg)
 
 
 
