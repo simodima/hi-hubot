@@ -1,1 +1,1 @@
-worker: bin/hubot -n Hubot
+worker: bin/hubot -a gtalk -n Hubot
