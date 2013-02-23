@@ -64,7 +64,7 @@ check = (url, pub, msg) ->
       if pub?
         console.log('publishing')
         message = JSON.stringify({'id': MD5(url), 'url' : url, 'code' : res.statusCode, "response_time" : response_time})
-        pub.publish(QUEUE, message)
+        pub.publish(QUEUE_PUB, message)
       if msg?
         msg.send url + "\t\t : " + res.statusCode
 
