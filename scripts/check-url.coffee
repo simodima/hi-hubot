@@ -21,14 +21,20 @@ HTTP = require "http"
 URL  = require "url"
 REDIS = require "redis"
 MD5 = require("blueimp-md5").md5
-QUEUE = "check-url"
+QUEUE_PUB = "check-url"
+QUEUE_SUB = "inbox"
 
 if process.env.REDISTOGO_URL?
   rtg = URL.parse(process.env.REDISTOGO_URL);
   publisher = REDIS.createClient(rtg.port, rtg.hostname);
   publisher.auth(rtg.auth.split(":")[1]);
+  subscriber = REDIS.createClient(rtg.port, rtg.hostname);
+  subscriber.auth(rtg.auth.split(":")[1]);
 else
   publisher = REDIS.createClient(6379, 'localhost').auth('');
+  subscriber = REDIS.createClient(6379, 'localhost').auth('');
+  console.log subscriber
+  console.log publisher
 
 
 # 2 minutes
@@ -56,6 +62,7 @@ check = (url, pub, msg) ->
           body: body
           status: res.statusCode
       if pub?
+        console.log('publishing')
         message = JSON.stringify({'id': MD5(url), 'url' : url, 'code' : res.statusCode, "response_time" : response_time})
         pub.publish(QUEUE, message)
       if msg?
@@ -67,10 +74,16 @@ check = (url, pub, msg) ->
   req.end()
 
 
-
 module.exports = (robot) ->
 
-  keepAlive = (msg) ->
+  listenExternal = (sub) ->
+    if sub?
+      console.log('subscribing')
+      sub.subscribe QUEUE_SUB
+      sub.on 'message', (channel, msg) ->
+        checkUrl()
+
+  checkUrl = (msg) ->
     robot.brain.data.urls ?= []
 
     for url in robot.brain.data.urls
@@ -80,11 +93,12 @@ module.exports = (robot) ->
         console.log("that probably isn't a url: " + url + " -- " + e)
 
     setTimeout (->
-      keepAlive()
+      checkUrl()
     ), frequency
 
-  keepAlive()
-
+  checkUrl()
+  listenExternal(subscriber)
+  
 
   robot.respond /check (.*)$/i, (msg) ->
     url = msg.match[1]
